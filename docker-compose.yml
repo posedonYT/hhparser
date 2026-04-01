@@ -16,24 +16,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # Одноразово создаёт БД, если том был от старой конфигурации без hh_analytics
-  db-init:
-    image: postgres:16-alpine
-    environment:
-      PGPASSWORD: postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        set -e
-        exists=$$(psql -h postgres -U postgres -d postgres -Atc "SELECT 1 FROM pg_database WHERE datname = 'hh_analytics'")
-        if [ "$$exists" != "1" ]; then
-          psql -h postgres -U postgres -d postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE hh_analytics"
-        fi
-    restart: "no"
-
   backend:
     build:
       context: ./backend
@@ -53,8 +35,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      db-init:
-        condition: service_completed_successfully
     ports:
       - "8000:8000"
 
