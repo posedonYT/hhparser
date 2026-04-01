@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 from app.services.hh_client import HHClient
 
 
@@ -46,8 +44,7 @@ def test_hh_client_fetches_all_pages() -> None:
 
     result = client.search_vacancies(
         query_text="Python backend",
-        date_from=datetime(2026, 3, 1, tzinfo=timezone.utc),
-        date_to=datetime(2026, 3, 30, tzinfo=timezone.utc),
+        period_days=30,
     )
 
     assert len(result) == 2

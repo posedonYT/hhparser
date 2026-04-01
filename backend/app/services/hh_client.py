@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
-
 import requests
 
 
@@ -23,7 +21,8 @@ class HHClient:
         if "User-Agent" not in self.session.headers:
             self.session.headers["User-Agent"] = user_agent
 
-    def search_vacancies(self, query_text: str, date_from: datetime, date_to: datetime) -> list[dict]:
+    def search_vacancies(self, query_text: str, period_days: int) -> list[dict]:
+        """Ищет вакансии за последние ``period_days`` дней (параметр ``period`` в API HH)."""
         items: list[dict] = []
         page = 0
         total_pages = 1
@@ -32,8 +31,7 @@ class HHClient:
             params = {
                 "text": query_text,
                 "area": self.area_id,
-                "date_from": date_from.isoformat(),
-                "date_to": date_to.isoformat(),
+                "period": max(1, int(period_days)),
                 "per_page": self.per_page,
                 "page": page,
             }

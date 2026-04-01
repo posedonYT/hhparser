@@ -106,14 +106,20 @@ class SyncService:
         return SyncSummary(status=status, results=results)
 
     def _sync_track(self, track: Track) -> TrackSyncStats:
-        now_moscow = datetime.now(ZoneInfo(self.settings.timezone))
-        date_from = now_moscow - timedelta(days=self.settings.hh_period_days)
+        tz_moscow = ZoneInfo(self.settings.timezone)
+        now_moscow = datetime.now(tz_moscow)
         query_text = TRACK_QUERY_MAP[track]
+
+        # Начало календарного окна (как у period в HH), чтобы не выкидывать вакансии из выдачи API
+        # из‑за сравнения published_at с «сейчас минус N суток по часам».
+        window_start_moscow = (now_moscow - timedelta(days=self.settings.hh_period_days)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        cutoff_utc = window_start_moscow.astimezone(ZoneInfo("UTC"))
 
         fetched_items = self.hh_client.search_vacancies(
             query_text=query_text,
-            date_from=date_from,
-            date_to=now_moscow,
+            period_days=self.settings.hh_period_days,
         )
 
         normalized_map: dict[str, NormalizedVacancy] = {}
@@ -179,7 +185,6 @@ class SyncService:
         else:
             self.session.execute(delete(VacancyRaw).where(VacancyRaw.track == track.value))
 
-        cutoff_utc = date_from.astimezone(ZoneInfo("UTC"))
         self.session.execute(
             delete(VacancyRaw).where(
                 VacancyRaw.track == track.value,

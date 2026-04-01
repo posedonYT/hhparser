@@ -14,7 +14,7 @@ class StubHHClient:
     def __init__(self, items: list[dict]):
         self.items = items
 
-    def search_vacancies(self, query_text, date_from, date_to):  # noqa: ANN001, D401
+    def search_vacancies(self, query_text, period_days):  # noqa: ANN001, D401
         return self.items
 
 
