@@ -1,4 +1,10 @@
-import type { LatestMetricsResponse, MetricsHistoryResponse, SyncResponse, Track } from '../types/api';
+import type {
+  LatestMetricsResponse,
+  MetricsHistoryResponse,
+  SyncResponse,
+  Track,
+  VacancyListResponse
+} from '../types/api';
 
 /** Относительный путь + proxy в Vite: один origin с UI, без CORS (localhost vs 127.0.0.1 и Docker). */
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
@@ -31,4 +37,8 @@ export function triggerSync(track: Track): Promise<SyncResponse> {
   return request<SyncResponse>(`/sync?track=${track}`, {
     method: 'POST'
   });
+}
+
+export function fetchVacancies(track: Track, limit = 50): Promise<VacancyListResponse> {
+  return request<VacancyListResponse>(`/vacancies?track=${track}&limit=${limit}`);
 }

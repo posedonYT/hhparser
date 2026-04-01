@@ -63,6 +63,10 @@ describe('App', () => {
         return new Response(JSON.stringify(historyPayload), { status: 200 });
       }
 
+      if (url.includes('/vacancies')) {
+        return new Response(JSON.stringify({ track: 'python_backend', items: [] }), { status: 200 });
+      }
+
       if (url.includes('/sync')) {
         return new Response(JSON.stringify({ status: 'success', results: [] }), { status: 200 });
       }

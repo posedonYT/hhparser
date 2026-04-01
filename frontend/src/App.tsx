@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { ChartsPanel } from './components/ChartsPanel';
 import { KpiCards } from './components/KpiCards';
 import { TrackTabs } from './components/TrackTabs';
-import { fetchLatestMetrics, fetchMetricsHistory, triggerSync } from './services/api';
-import type { LatestMetricsResponse, MetricsHistoryResponse, Track } from './types/api';
+import { VacancyList } from './components/VacancyList';
+import { fetchLatestMetrics, fetchMetricsHistory, fetchVacancies, triggerSync } from './services/api';
+import type { LatestMetricsResponse, MetricsHistoryResponse, Track, VacancyListItem } from './types/api';
 
 const EMPTY_LATEST: LatestMetricsResponse = {
   track: 'python_backend',
@@ -53,6 +54,7 @@ export default function App(): JSX.Element {
   const [activeTrack, setActiveTrack] = useState<Track>('python_backend');
   const [latestMetrics, setLatestMetrics] = useState<LatestMetricsResponse>(EMPTY_LATEST);
   const [historyMetrics, setHistoryMetrics] = useState<MetricsHistoryResponse>(EMPTY_HISTORY);
+  const [vacancies, setVacancies] = useState<VacancyListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -62,9 +64,14 @@ export default function App(): JSX.Element {
     setErrorMessage(null);
 
     try {
-      const [latest, history] = await Promise.all([fetchLatestMetrics(track), fetchMetricsHistory(track, 30)]);
+      const [latest, history, vacancyPayload] = await Promise.all([
+        fetchLatestMetrics(track),
+        fetchMetricsHistory(track, 30),
+        fetchVacancies(track, 50)
+      ]);
       setLatestMetrics(latest);
       setHistoryMetrics(history);
+      setVacancies(vacancyPayload.items);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Не удалось загрузить данные';
       setErrorMessage(message);
@@ -132,6 +139,7 @@ export default function App(): JSX.Element {
             snapshotDate={latestMetrics.snapshot_date}
           />
           <ChartsPanel breakdown={latestMetrics.breakdown} history={historyMetrics.points} />
+          <VacancyList items={vacancies} />
         </>
       )}
     </main>

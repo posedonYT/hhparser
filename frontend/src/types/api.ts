@@ -44,3 +44,15 @@ export interface SyncResponse {
   status: 'success' | 'failed' | 'partial_success';
   results: SyncTrackResult[];
 }
+
+export interface VacancyListItem {
+  hh_id: string;
+  title: string;
+  employer: string | null;
+  url: string | null;
+}
+
+export interface VacancyListResponse {
+  track: Track;
+  items: VacancyListItem[];
+}

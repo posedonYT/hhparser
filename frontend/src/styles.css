@@ -194,6 +194,78 @@ body {
   border-color: rgba(224, 95, 45, 0.45);
 }
 
+.vacancy-section {
+  margin-top: 1.25rem;
+}
+
+.vacancy-section-title {
+  margin: 0 0 0.75rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.08rem;
+}
+
+.vacancy-empty {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+}
+
+.vacancy-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.vacancy-card {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(20, 20, 20, 0.05);
+}
+
+.vacancy-title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 1.02rem;
+  line-height: 1.35;
+}
+
+.vacancy-employer {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.vacancy-link {
+  display: inline-block;
+  margin-top: 0.65rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.vacancy-link:hover {
+  border-bottom-color: var(--accent);
+}
+
+.vacancy-link-muted {
+  display: inline-block;
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 @media (max-width: 980px) {
   .kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
