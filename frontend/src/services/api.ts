@@ -1,6 +1,7 @@
 import type { LatestMetricsResponse, MetricsHistoryResponse, SyncResponse, Track } from '../types/api';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api/v1';
+/** Относительный путь + proxy в Vite: один origin с UI, без CORS (localhost vs 127.0.0.1 и Docker). */
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {

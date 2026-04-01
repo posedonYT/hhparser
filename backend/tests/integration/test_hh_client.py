@@ -20,6 +20,7 @@ class FakeSession:
     def __init__(self, responses: dict[int, dict]):
         self.responses = responses
         self.requested_pages: list[int] = []
+        self.headers: dict[str, str] = {}
 
     def get(self, url: str, params: dict, timeout: int):  # noqa: ANN001
         self.requested_pages.append(params["page"])
@@ -39,6 +40,7 @@ def test_hh_client_fetches_all_pages() -> None:
         area_id=1,
         per_page=100,
         timeout_seconds=10,
+        user_agent="test-hh-client/1.0",
         session=session,
     )
 

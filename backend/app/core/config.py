@@ -17,11 +17,12 @@ class Settings(BaseSettings):
     hh_area_id: int = 1
     hh_period_days: int = 30
     hh_per_page: int = 100
+    hh_user_agent: str = "OZPraktika-HHAnalytics/1.0 (support@example.local)"
 
     cbr_base_url: str = "https://www.cbr-xml-daily.ru"
     request_timeout_seconds: int = 20
 
-    frontend_origin: str = "http://localhost:5173"
+    frontend_origin: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

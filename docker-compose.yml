@@ -29,7 +29,8 @@ services:
       HH_PER_PAGE: "100"
       CBR_BASE_URL: https://www.cbr-xml-daily.ru
       REQUEST_TIMEOUT_SECONDS: "20"
-      FRONTEND_ORIGIN: http://localhost:5173
+      FRONTEND_ORIGIN: http://localhost:5173,http://127.0.0.1:5173
+      HH_USER_AGENT: "OZPraktika-HHAnalytics/1.0 (docker-compose)"
     depends_on:
       postgres:
         condition: service_healthy
@@ -40,7 +41,8 @@ services:
     build:
       context: ./frontend
     environment:
-      VITE_API_BASE_URL: http://localhost:8000/api/v1
+      VITE_API_BASE_URL: /api/v1
+      API_PROXY_TARGET: http://backend:8000
     depends_on:
       - backend
     ports:

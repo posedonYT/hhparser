@@ -12,6 +12,7 @@ class HHClient:
         area_id: int,
         per_page: int,
         timeout_seconds: int,
+        user_agent: str,
         session: requests.Session | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
@@ -19,6 +20,8 @@ class HHClient:
         self.per_page = per_page
         self.timeout_seconds = timeout_seconds
         self.session = session or requests.Session()
+        if "User-Agent" not in self.session.headers:
+            self.session.headers["User-Agent"] = user_agent
 
     def search_vacancies(self, query_text: str, date_from: datetime, date_to: datetime) -> list[dict]:
         items: list[dict] = []

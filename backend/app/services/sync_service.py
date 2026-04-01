@@ -65,6 +65,7 @@ class SyncService:
             area_id=settings.hh_area_id,
             per_page=settings.hh_per_page,
             timeout_seconds=settings.request_timeout_seconds,
+            user_agent=settings.hh_user_agent,
         )
         self.cbr_client = cbr_client or CBRClient(
             base_url=settings.cbr_base_url,
