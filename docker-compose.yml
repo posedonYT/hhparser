@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-hh_analytics}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -19,6 +20,7 @@ services:
   backend:
     build:
       context: ./backend
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -39,17 +41,30 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8000/api/v1/health\", timeout=5)"',
+        ]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 120s
     ports:
       - "8000:8000"
 
   frontend:
     build:
       context: ./frontend
+    restart: unless-stopped
     environment:
       VITE_API_BASE_URL: /api/v1
-      API_PROXY_TARGET: http://backend:8000
+      # В compose — имя сервиса; на PaaS без Docker DNS задайте URL API, например https://api.example.com
+      API_PROXY_TARGET: ${API_PROXY_TARGET:-http://backend:8000}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "5173:5173"
 
