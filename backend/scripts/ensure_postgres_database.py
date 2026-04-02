@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 import sys
 import time
@@ -11,12 +10,14 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import OperationalError
 
+from app.core.config import get_settings
+
 # Только безопасные идентификаторы без кавычек в CREATE DATABASE
 _SAFE_DB_NAME = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 
 
 def main() -> None:
-    raw = os.environ.get("DATABASE_URL", "")
+    raw = get_settings().database_url
     if not raw.startswith("postgresql"):
         return
 

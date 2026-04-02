@@ -2,14 +2,14 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: hh_analytics
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-hh_analytics}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      # Тот же пароль подставляется в backend через POSTGRES_* — не задавайте DATABASE_URL вручную, если хотите совпадение
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     healthcheck:
-      # Только кластер: так check проходит и при старом томе, где ещё нет hh_analytics
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\""]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -20,7 +20,11 @@ services:
     build:
       context: ./backend
     environment:
-      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/hh_analytics
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-hh_analytics}
       TIMEZONE: Europe/Moscow
       ENABLE_SCHEDULER: "true"
       SYNC_INTERVAL_MINUTES: "60"

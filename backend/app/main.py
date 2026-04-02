@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import OperationalError
 
 from app.api.router import api_router
 from app.core.config import get_settings
@@ -11,6 +13,21 @@ from app.core.scheduler import build_scheduler
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title=settings.app_name)
+
+    @app.exception_handler(OperationalError)
+    async def database_operational_error_handler(
+        _request: Request,
+        _exc: OperationalError,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "detail": (
+                    "База данных недоступна или неверные учётные данные. "
+                    "Проверьте POSTGRES_PASSWORD / DATABASE_URL и при смене пароля пересоздайте том PostgreSQL."
+                )
+            },
+        )
 
     cors_origins = [
         origin.strip()
