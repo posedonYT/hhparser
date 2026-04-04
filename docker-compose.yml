@@ -10,10 +10,10 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\""]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 12
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -42,15 +42,11 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8000/api/v1/health\", timeout=5)"',
-        ]
-      interval: 15s
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=5); sys.exit(0)\""]
+      interval: 10s
       timeout: 8s
-      retries: 5
-      start_period: 120s
+      retries: 8
+      start_period: 90s
     ports:
       - "8000:8000"
 
